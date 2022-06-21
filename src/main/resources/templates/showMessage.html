@@ -1,0 +1,123 @@
+<!-- Copyright 2022 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+-->
+
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Show Reservation</title>
+    <meta charset="UTF-8">
+<style type="text/css">
+        .editForm {
+            display: none;
+        }
+        .deleteForm {
+            display: none;
+        }
+    </style>
+<script>
+function callEdit(){
+    document.getElementById("editForm").style.display = "block";
+    document.getElementById("deleteForm").style.display = "none";
+}
+function callDelete(){
+    document.getElementById("deleteForm").style.display = "block";
+    document.getElementById("editForm").style.display = "none";
+}
+
+function validate(){
+    var hourDt = new Date().getHours()+1;
+    var hr = document.getElementById("hourField").value;
+    var player = document.getElementById("playerField").value;
+    if( /[^0-9]/.test( hr ) ) {
+        alert('Hour is not numeric');
+    }
+    else if( /[^0-9]/.test( player ) ) {
+        alert('Player count is not numeric');
+    }
+    else if((hr < hourDt) || (hr >= 24) || (hr <=0 )){
+        alert('Hour is not valid');
+    }
+    else if((player > 5) || (player <=0 )){
+        alert('Player count is more than 5');
+    }
+    else{
+        document.eForm.submit();
+    }
+}
+
+function clearAll(){
+    document.getElementById("hourField").value = "";
+    document.getElementById("playerField").value = "";
+}
+</script>
+</head>
+<body>
+<div align="center">
+<h1>Reservation</h1>
+
+<p th:text="'Apt Number: ' + ${reservation.aptId}"></p>
+<!--<p th:text="'Date: ' + ${reservation.resDate}"></p> -->
+<p th:text="'Hour: ' + ${reservation.hourNumber}"></p>
+<p th:text="'Player Count: ' + ${reservation.playerCount}"></p>
+<a href="/home">Home</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="#" onClick="callEdit();">Edit</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="#" onClick="callDelete();">Delete</a>
+</div>
+<br>
+
+<div id="editForm" class="editForm" align = "center">
+    <h1>Edit</h1>
+    <form id="eForm" name="eForm" action="#" th:action="@{/editreservation}" th:object="${reservation}" method="post">
+    <p>
+        <input type="hidden" th:field="*{aptId}">
+    </p>
+    <table>
+    <tr>
+    <td width="25%">
+        Hour: 
+    </td>
+    <td width="75%"> 
+        <input id="hourField" type="text" th:field="*{hourNumber}">
+    </td>
+    </tr>
+    <tr>
+    <td width="25%">
+        Player Count: 
+    </td>
+    <td width="75%"><input id="playerField" type="text" th:field="*{playerCount}">
+    </td>
+    </tr>
+    <tr>
+    <td align="center" colspan="2">
+        <input type="button" value="Submit" style="background-color:red; color:white;" onClick="validate();"/>  
+        <input type="button" value="Reset" style="background-color:blue; color:white;" onClick="clearAll();"> </td>
+    </tr>
+    </table>
+    </form>
+</div>
+
+<div id="deleteForm" class="deleteForm" align = "center">
+    <h1>Delete</h1>
+    <form id="dForm" name="dForm" action="#" th:action="@{/deletereservation}" th:object="${reservation}" method="post">
+        <input type="hidden" th:field="*{aptId}">
+    </p>
+    <p>
+        <input type="submit" value="Confirm" style="background-color:red; color:white;" onClick="validate();"/> 
+    </p>
+    </form>
+</div>
+
+</body>
+</html>
